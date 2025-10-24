@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Sign Up - StrathEventique</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" th:href="@{/assets/StrathEventique_Logo.png}" type="image/png">
+
+    <style>
+        .password-toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            z-index: 5; /* Ensure icon is clickable */
+        }
+        .form-outline {
+            position: relative; /* Needed for absolute positioning of icon */
+        }
+        :root{
+            --navy: #0a2540;
+            --navy-dark: #071a30;
+            --gold: #D4AF37;
+            --gold-dark: #b98f2b;
+        }
+        .gradient-custom-3 {
+            background: linear-gradient(90deg, rgba(10,37,64,0.9) 0%, rgba(10,37,64,0.7) 100%);
+        }
+        /* Adding button colors */
+        .btn-primary { background-color: var(--navy) !important; border-color: var(--navy) !important; color: var(--gold) !important; }
+        .btn-primary:hover { background-color: var(--navy-dark) !important; color: #fff !important; }
+    </style>
+</head>
+<body>
+<section class="vh-100 bg-image"
+         style="background-image: url('https://strathmore.edu/wp-content/uploads/2023/12/Artboard-1.png');"
+>
+    <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+        <div class="container h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                    <div class="card" style="border-radius: 15px;">
+                        <div class="card-body p-5">
+
+                            <div th:if="${msg}" class="alert text-center" th:classappend="${msg_type == 'danger' ? 'alert-danger' : 'alert-success'}">
+                                <span th:text="${msg}"></span>
+                                <ul th:if="${errors}" class="list-unstyled mb-0 mt-2">
+                                    <li th:each="errKey : ${errors.keySet()}" th:text="${errors.get(errKey)}"></li>
+                                </ul>
+                            </div>
+
+                            <div class="text-center mb-4">
+                                <img th:src="@{/assets/StrathEventique_Logo.png}" alt="StrathEventique Logo" style="height: 80px;" class="me-3">
+                                <h2 class="text-uppercase text-center d-inline-block align-middle">StrathEventique</h2>
+                            </div>
+
+                            <h3 class="fw-normal mb-4 text-center" style="letter-spacing: 1px;">Create an Account</h3>
+
+                            <form method="post" th:action="@{/signup}" th:object="${userDto}">
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <input type="text" name="fullname" class="form-control form-control-lg" required th:field="*{fullname}" />
+                                    <label class="form-label">Your Name</label>
+                                </div>
+
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <input type="email" name="email" class="form-control form-control-lg" required th:field="*{email}" />
+                                    <label class="form-label">Your Email</label>
+                                </div>
+
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <input type="password" name="password" id="signupPassword" class="form-control form-control-lg" required th:field="*{password}" />
+                                    <label class="form-label" for="signupPassword">Password</label>
+                                    <i class="fas fa-eye password-toggle-icon" onclick="togglePasswordVisibility('signupPassword', this)"></i>
+                                </div>
+
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <input type="password" name="password_repeat" id="signupPasswordRepeat" class="form-control form-control-lg" required th:field="*{passwordRepeat}" />
+                                    <label class="form-label" for="signupPasswordRepeat">Repeat your password</label>
+                                    <i class="fas fa-eye password-toggle-icon" onclick="togglePasswordVisibility('signupPasswordRepeat', this)"></i>
+                                </div>
+
+                                <div class="d-flex justify-content-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="terms_agree" id="terms_agree" required />
+                                        <label class="form-check-label" for="terms_agree">
+                                            I agree to the <a href="#!" class="text-body"><u>Terms of service</u></a>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button data-mdb-button-init data-mdb-ripple-init type="submit" class="btn btn-primary btn-lg mb-3" style="width: 100%;">Register</button>
+                            </form>
+
+                            <div class="text-center">
+                                <p class="mb-0">Already have an account? <a th:href="@{/signin}" class="link-info">Log in here</a></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+<script>
+    // Keep the password toggle function
+    function togglePasswordVisibility(fieldId, iconElement) {
+        const passwordField = document.getElementById(fieldId);
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            iconElement.classList.remove('fa-eye');
+            iconElement.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            iconElement.classList.remove('fa-eye-slash');
+            iconElement.classList.add('fa-eye');
+        }
+    }
+</script>
+</body>
+</html>
