@@ -41,6 +41,8 @@
 </head>
 <body>
 
+<div th:replace="~{layout :: navbar}"></div>
+
 <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
     Invalid email or password.
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -55,7 +57,7 @@
 </div>
 
 
-<section class="vh-100 bg-image" style="background-image: url('https://strathmore.edu/wp-content/uploads/2023/12/Artboard-1.png');">
+<section class="vh-100 bg-image" style="background-image: url('https://strathmore.edu/wp-content/uploads/2023/12/Artboard-1.png'); padding-top: 56px;">
     <div class="mask d-flex align-items-center h-100 gradient-custom-3">
         <div class="container h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
