@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title th:text="${title ?: 'StrathEventique'}">StrathEventique</title>
+
+    <link rel="canonical" href="https://https://getbootstrap.com/docs/4.6/dist/css/bootstrap.min.css">
+    <link href="https://getbootstrap.com/docs/4.6/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="icon" th:href="@{/assets/StrathEventique_Logo.png}" type="image/png">
+    <meta name="theme-color" content="#563d7c">
+
+    <style>
+        /* Animation on scroll styles */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-0 { transition-delay: 0ms; }
+        .delay-1 { transition-delay: 100ms; }
+        .delay-2 { transition-delay: 200ms; }
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+        :root{
+            --navy: #0a2540;
+            --navy-dark: #071a30;
+            --gold: #D4AF37;
+            --gold-dark: #b98f2b;
+        }
+        .navbar.bg-primary, .navbar.bg-dark { background-color: var(--navy) !important; }
+        .navbar-brand { color: var(--gold) !important; font-weight: 600; }
+        .navbar-dark .navbar-nav .nav-link { color: rgba(212,175,55,0.95) !important; }
+        .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus,
+        .navbar-dark .navbar-nav .nav-link.active { color: #fff !important; text-shadow: 0 0 6px rgba(10,37,64,0.2); }
+        .btn-primary, .bg-primary { background-color: var(--navy) !important; border-color: var(--navy) !important; color: var(--gold) !important; }
+        .btn-primary:hover, .btn-primary:focus { background-color: var(--navy-dark) !important; border-color: var(--navy-dark) !important; color: #fff !important; }
+        .btn-info, .btn-success { background-color: var(--navy) !important; border-color: var(--navy) !important; color: var(--gold) !important; }
+        .btn-info:hover, .btn-success:hover { background-color: var(--navy-dark) !important; border-color: var(--navy-dark) !important; color: #fff !important; }
+        .bg-light { background-color: var(--gold) !important; color: var(--navy) !important; }
+        .text-muted { color: rgba(0,0,0,0.55) !important; }
+        .jumbotron { background-color: var(--navy) !important; color: var(--gold) !important; }
+        .jumbotron .lead, .jumbotron p { color: rgba(212,175,55,0.95); }
+        .text-gold { color: var(--gold) !important; }
+        .card { border-color: rgba(10,37,64,0.08); }
+        .placeholder-bg { background-image: url('assets/images/signup-bg-placeholder.jpg'); background-size: cover; background-position: center; }
+        .navbar {
+            transition: top 0.3s ease-in-out;
+        }
+    </style>
+
+    <th:block layout:fragment="styles"></th:block>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+    <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+        <img th:src="@{/assets/StrathEventique_Logo.png}" alt="StrathEventique Logo" style="height: 35px;" class="me-2">
+        <span>StrathEventique</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/events}">Events</a>
+            </li>
+
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{/signin}">Sign In</a>
+            </li>
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{/signup}">Sign Up</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto" sec:authorize="isAuthenticated()">
+
+            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                <a class="nav-link" th:href="@{/scan-ticket}"><i class="fas fa-qrcode me-1"></i>Scan Tickets</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user-circle"></i>
+                    <span sec:authentication="principal.fullname">User Name</span>
+                    <span sec:authorize="hasRole('ADMIN')"> (Admin)</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" th:href="@{/dashboard}"><i class="fas fa-tachometer-alt"></i> My Dashboard</a>
+
+                    <a class="dropdown-item" th:href="@{/my-tickets}" sec:authorize="!hasRole('ADMIN')">
+                        <i class="fas fa-ticket-alt"></i> My Tickets
+                    </a>
+
+                    <a class="dropdown-item" th:href="@{/profile}"><i class="fas fa-user"></i> My Profile</a>
+                    <div class="dropdown-divider"></div>
+
+                    <a class="dropdown-item" href="javascript:;" onclick="document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                    <form th:action="@{/logout}" method="post" id="logout-form" style="display: none;"></form>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main role="main" layout:fragment="content">
+</main>
+
+
+<footer class="container" style="padding-top: 20px;">
+    <p>&copy; StrathEventique 2025</p>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+<script>
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar');
+
+    window.addEventListener("scroll", function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop) {
+            // Scrolling Down
+            navbar.style.top = "-80px"; // Hides the navbar by moving it up
+        } else {
+            // Scrolling Up
+            navbar.style.top = "0"; // Shows the navbar by moving it back to the top
+        }
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+    }, false);
+</script>
+
+<th:block layout:fragment="scripts"></th:block>
+
+</body>
+</html>

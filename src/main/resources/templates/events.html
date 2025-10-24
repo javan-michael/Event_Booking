@@ -1,0 +1,101 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<main role="main" layout:fragment="content">
+
+    <div class="container" style="margin-top: 100px;">
+        <div class="text-center mb-5">
+            <h1>Upcoming Events</h1>
+            <p class="lead text-muted">Discover the next big thing happening at Strathmore</p>
+
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6">
+                    <form method="GET" th:action="@{/events}">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search for events..." th:value="${search_term}">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <th:block th:if="${events != null && !events.isEmpty()}">
+                <div class="col-md-4 mb-4 animate-on-scroll" th:each="event, iter : ${events}" th:classappend="'delay-' + (${iter.index} % 3)">
+                    <div class="card h-100 shadow-sm">
+                        <img class="card-img-top" alt="Event Image" style="height: 200px; object-fit: cover;"
+                             th:src="${event.imagePath != null ? @{'/' + event.imagePath} : 'https://placehold.co/600x400/0a2540/D4AF37?text=' + event.title}" />
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title" th:text="${event.title}">Event Title</h5>
+                            <p class="card-text text-muted">
+                                <strong>Date:</strong> <span th:text="${#temporals.format(event.eventDate, 'E, MMM d, yyyy')}">Date</span><br>
+                                <strong>Time:</strong> <span th:text="${#temporals.format(event.eventTime, 'h:mm a')}">Time</span><br>
+                                <strong>Location:</strong> <span th:text="${event.location}">Location</span>
+                            </p>
+                            <p class="card-text flex-grow-1" th:text="${#strings.substring(event.description, 0, 100)} + '...'">
+                                Description...
+                            </p>
+                            <a th:href="@{/event-details(id=${event.id})}" class="btn btn-primary mt-auto">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+
+            <div class="col-12 text-center" th:if="${events == null || events.isEmpty()}">
+                <div sec:authorize="hasRole('ADMIN')">
+                    <p class="lead text-muted">No upcoming events found.</p>
+                    <a th:href="@{/create-event}" class="btn btn-primary mt-2">Create the First Event!</a>
+                </div>
+                <div sec:authorize="!hasRole('ADMIN')">
+                    <p class="lead text-muted">There are no upcoming events matching your search at the moment. Please check back soon!</p>
+                </div>
+            </div>
+        </div>
+
+        <nav aria-label="Page navigation" class="mt-5" th:if="${totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/events(page=${currentPage - 1}, search=${search_term})}">Previous</a>
+                </li>
+
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/events(page=${i}, search=${search_term})}" th:text="${i}">1</a>
+                </li>
+
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/events(page=${currentPage + 1}, search=${search_term})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        // Animation script from events.php
+        document.addEventListener("DOMContentLoaded", () => {
+            const targets = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            targets.forEach(target => {
+                observer.observe(target);
+            });
+        });
+    </script>
+</th:block>
+
+</html>
