@@ -1,123 +1,107 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Sign In - StrathEventique</title>
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="icon" th:href="@{/assets/StrathEventique_Logo.png}" type="image/png">
-
-    <style>
-        .password-toggle-icon {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
-            z-index: 5; /* Ensure icon is clickable */
-        }
-        .form-outline {
-            position: relative; /* Needed for absolute positioning of icon */
-        }
-
-        /* ensure standalone signin page uses same palette */
-        :root{
-            --navy: #0a2540;
-            --navy-dark: #071a30;
-            --gold: #D4AF37;
-            --gold-dark: #b98f2b;
-        }
-        .btn-primary, .btn-info { background-color: var(--navy) !important; border-color: var(--navy) !important; color: var(--gold) !important; }
-        .btn-primary:hover, .btn-info:hover { background-color: var(--navy-dark) !important; color: #fff !important; }
-
-        /* Added styles from signup for consistency */
-        .gradient-custom-3 {
-            background: linear-gradient(90deg, rgba(10,37,64,0.9) 0%, rgba(10,37,64,0.7) 100%);
-        }
-    </style>
+    <th:block layout:fragment="styles">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+        <style>
+            .password-toggle-icon {
+                position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
+                cursor: pointer; z-index: 5;
+            }
+            .form-outline { position: relative; }
+            .gradient-custom-3 {
+                background: linear-gradient(90deg, rgba(10,37,64,0.9) 0%, rgba(10,37,64,0.7) 100%);
+            }
+            /* Override button colors defined in layout if needed, but they should match */
+            .btn-info { background-color: var(--navy) !important; border-color: var(--navy) !important; color: var(--gold) !important; }
+            .btn-info:hover { background-color: var(--navy-dark) !important; color: #fff !important; }
+        </style>
+    </th:block>
 </head>
+
 <body>
 
-<div th:replace="~{layout :: navbar}"></div>
+<main layout:fragment="content">
+    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
+        Invalid email or password.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
+        You have been logged out.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${msg}" class="alert alert-dismissible fade show" th:classappend="${msg_type == 'success' ? 'alert-success' : 'alert-info'}" role="alert" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
+        <span th:text="${msg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 
-<div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
-    Invalid email or password.
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-<div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
-    You have been logged out.
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-<div th:if="${msg}" class="alert alert-dismissible fade show" th:classappend="${msg_type == 'success' ? 'alert-success' : 'alert-info'}" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
-    <span th:text="${msg}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-
-
-<section class="vh-100 bg-image" style="background-image: url('https://strathmore.edu/wp-content/uploads/2023/12/Artboard-1.png'); padding-top: 56px;">
-    <div class="mask d-flex align-items-center h-100 gradient-custom-3">
-        <div class="container h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-                    <div class="card" style="border-radius: 15px;">
-                        <div class="card-body p-5">
-
-                            <div class="text-center mb-4">
-                                <img th:src="@{/assets/StrathEventique_Logo.png}" alt="StrathEventique Logo" style="height: 80px;" class="me-3">
-                                <h2 class="text-uppercase text-center d-inline-block align-middle">StrathEventique</h2>
+    <section class="vh-100 bg-image" style="background-image: url('https://strathmore.edu/wp-content/uploads/2023/12/Artboard-1.png'); padding-top: 56px;">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="card" style="border-radius: 15px;">
+                            <div class="card-body p-5">
+                                <div class="text-center mb-4">
+                                    <img th:src="@{/assets/StrathEventique_Logo.png}" alt="StrathEventique Logo" style="height: 80px;" class="me-3">
+                                    <h2 class="text-uppercase text-center d-inline-block align-middle">StrathEventique</h2>
+                                </div>
+                                <h3 class="fw-normal mb-4 text-center" style="letter-spacing: 1px;">Log In</h3>
+                                <form th:action="@{/login}" method="post">
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <input type="email" name="username" id="form2Example18" class="form-control form-control-lg" required />
+                                        <label class="form-label" for="form2Example18">Email address</label>
+                                    </div>
+                                    <div data-mdb-input-init class="form-outline mb-4">
+                                        <input type="password" name="password" id="form2Example28" class="form-control form-control-lg" required />
+                                        <label class="form-label" for="form2Example28">Password</label>
+                                        <i class="fas fa-eye password-toggle-icon" onclick="togglePasswordVisibility('form2Example28', this)"></i>
+                                    </div>
+                                    <div class="pt-1 mb-4">
+                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="small mb-3"><a class="text-muted" th:href="@{/forgot-password}">Forgot password?</a></p>
+                                        <p>Don't have an account? <a th:href="@{/signup}" class="link-info">Register here</a></p>
+                                    </div>
+                                </form>
                             </div>
-
-                            <h3 class="fw-normal mb-4 text-center" style="letter-spacing: 1px;">Log In</h3>
-
-                            <form th:action="@{/signin}" method="post">
-                                <div data-mdb-input-init class="form-outline mb-4">
-                                    <input type="email" name="username" id="form2Example18" class="form-control form-control-lg" required />
-                                    <label class="form-label" for="form2Example18">Email address</label>
-                                </div>
-
-                                <div data-mdb-input-init class="form-outline mb-4">
-                                    <input type="password" name="password" id="form2Example28" class="form-control form-control-lg" required />
-                                    <label class="form-label" for="form2Example28">Password</label>
-                                    <i class="fas fa-eye password-toggle-icon" onclick="togglePasswordVisibility('form2Example28', this)"></i>
-                                </div>
-
-                                <div class="pt-1 mb-4">
-                                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
-                                </div>
-
-                                <div class="text-center">
-                                    <p class="small mb-3"><a class="text-muted" th:href="@{/forgot-password}">Forgot password?</a></p>
-                                    <p>Don't have an account? <a th:href="@{/signup}" class="link-info">Register here</a></p>
-                                </div>
-                            </form>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
-<script>
-    // Keep the password toggle function
-    function togglePasswordVisibility(fieldId, iconElement) {
-        const passwordField = document.getElementById(fieldId);
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            iconElement.classList.remove('fa-eye');
-            iconElement.classList.add('fa-eye-slash');
-        } else {
-            passwordField.type = 'password';
-            iconElement.classList.remove('fa-eye-slash');
-            iconElement.classList.add('fa-eye');
-        }
-    }
-</script>
-</body>
-</html>
+    <th:block layout:fragment="scripts">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+        <script>
+            // Keep the password toggle function
+            function togglePasswordVisibility(fieldId, iconElement) {
+                const passwordField = document.getElementById(fieldId);
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    iconElement.classList.remove('fa-eye');
+                    iconElement.classList.add('fa-eye-slash');
+                } else {
+                    passwordField.type = 'password';
+                    iconElement.classList.remove('fa-eye-slash');
+                    iconElement.classList.add('fa-eye');
+                }
+            }
+            // Initialize MDB components (needed since scripts load at end)
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('[data-mdb-input-init]').forEach((element) => {
+                    new mdb.Input(element).init();
+                });
+                document.querySelectorAll('[data-mdb-button-init]').forEach((element) => {
+                    new mdb.Button(element).init();
+                });
+            });
+        </script>
+    </th:block>
+</main> </html>

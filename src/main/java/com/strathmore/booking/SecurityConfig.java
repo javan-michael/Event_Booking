@@ -25,30 +25,29 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        // Allow public access to static resources, signin, signup, home, events
+
                         .requestMatchers(
-                                "/", "/events", "/event-details", // Public pages
-                                "/signin", "/signup", "/verify", // Auth pages
-                                "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**" // Static files
+                                "/", "/events", "/event-details", "/signup", "/verify", // Public pages
+                                "/signin", // Explicitly permit the login page URL
+                                "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**", "/favicon.ico" // Static files
                         ).permitAll()
-                        // Require authentication for all other pages (like /dashboard, /profile)
+                        // Rule 2: All *other* requests must be authenticated
                         .anyRequest().authenticated()
                 )
                 // Configure the login form
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/signin") // Use our custom signin page
-                        .loginProcessingUrl("/signin") // The URL the form POSTs to
-                        .defaultSuccessUrl("/dashboard", true) // Redirect to dashboard after login
-                        .permitAll() // Allow everyone to access the login page
+                        .loginPage("/signin")           // The URL for our custom login page (GET)
+                        .loginProcessingUrl("/login")   // **CHANGE:** Use the default URL for submission (POST)
+                        .defaultSuccessUrl("/dashboard", true) // Redirect after successful login
+                        .permitAll()                     // Allows access to loginPage and loginProcessingUrl
                 )
-                // Configure logout
+                // Configure logout (remains the same)
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // The URL to trigger logout
-                        .logoutSuccessUrl("/signin?logout") // Redirect after logout
-                        .permitAll() // Allow everyone to logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/signin?logout")
+                        .permitAll()
                 )
-                // CSRF is enabled by default, good for security
-                .csrf(withDefaults());
+                .csrf(withDefaults()); // Keep CSRF enabled
 
         return http.build();
     }
