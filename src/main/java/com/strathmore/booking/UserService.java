@@ -63,4 +63,21 @@ public class UserService {
         }
         return false;
     }
+    public void changeUserPassword(User user, String currentPassword, String newPassword, String newPasswordRepeat) throws Exception {
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new Exception("Incorrect current password.");
+        }
+        // Validate new password
+        if (newPassword == null || newPassword.length() < 6) { // Add length check if desired
+            throw new Exception("New password must be at least 6 characters long.");
+        }
+        if (!newPassword.equals(newPasswordRepeat)) {
+            throw new Exception("New passwords do not match.");
+        }
+
+        // Hash and update password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }
