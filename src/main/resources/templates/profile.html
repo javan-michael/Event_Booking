@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>My Profile - StrathEventique</title>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+    <div class="container" style="margin-top: 100px;">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h2>My Profile</h2>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${user != null}">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Full Name</label>
+                                <p class="form-control-plaintext fs-5" th:text="${user.fullname}">User Full Name</p>
+                            </div>
+                            <hr>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Email Address</label>
+                                <p class="form-control-plaintext fs-5" th:text="${user.email}">user@example.com</p>
+                            </div>
+                            <hr>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Role</label>
+                                <p class="fs-5">
+                                    <span class="badge"
+                                          th:classappend="${#strings.equalsIgnoreCase(user.role, 'admin')} ? 'bg-primary' : 'bg-secondary'"
+                                          th:text="${#strings.capitalize(user.role)}">User Role</span>
+                                </p>
+                            </div>
+                            <div class="mt-4">
+                                <a th:href="@{/change-password}" class="btn btn-outline-primary">Change Password</a>
+                            </div>
+                        </div>
+                        <div th:unless="${user != null}">
+                            <p class="text-danger">Could not load user profile information.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

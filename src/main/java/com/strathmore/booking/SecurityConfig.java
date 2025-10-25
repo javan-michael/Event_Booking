@@ -4,18 +4,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-// Import this
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-// Import this
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import static org.springframework.security.config.Customizer.withDefaults; // Import this
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Add this bean for password hashing
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -25,8 +22,26 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll() // Allow EVERYTHING temporarily
-                ); // Keep CSRF enabled
+                        .requestMatchers(
+                                "/", "/events", "/event-details", "/signup", "/verify",
+                                "/signin",
+                                "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**", "/favicon.ico"
+                        ).permitAll()
+                        .requestMatchers("/create-event").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/signin")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/dashboard", true) // Change back to "/dashboard"
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/signin?logout")
+                        .permitAll()
+                )
+                .csrf(withDefaults());
 
         return http.build();
     }

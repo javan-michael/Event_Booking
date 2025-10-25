@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Verify Account - StrathEventique</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" th:href="@{/assets/StrathEventique_Logo.png}" type="image/png">
+    <style>
+        :root{ --navy: #0a2540; --gold: #D4AF37; }
+        .verification-container {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--navy) 0%, #11263b 100%); color: var(--gold);
+        }
+        .text-primary { color: var(--gold) !important; }
+        .btn-primary { background-color: var(--navy) !important; color: var(--gold) !important; border-color: var(--navy) !important; }
+        .card { color: #333; } /* Make card text readable */
+    </style>
+</head>
+<body>
+<section class="verification-container">
+    <div class="container">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-lg" style="border-radius: 15px;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-envelope-check text-primary" viewBox="0 0 16 16">
+                                <path d="M2 2a2 2 0 0 0-2 2v8.01A2 2 0 0 0 2 14h5.5a.5.5 0 0 0 0-1H2a1 1 0 0 1-.966-.741l5.64-3.471L8 9.583l7-4.2V8.5a.5.5 0 0 0 1 0V4a2 2 0 0 0-2-2H2Zm3.708 6.208L1 11.105V5.383l4.708 2.825ZM1 4.217V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v.217l-7 4.2-7-4.2Z"/>
+                                <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm-1.993-1.679a.5.5 0 0 0-.686.172l-1.17 1.95-.547-.547a.5.5 0 0 0-.708.708l.774.773a.75.75 0 0 0 1.174-.144l1.335-2.226a.5.5 0 0 0-.172-.686Z"/>
+                            </svg>
+                        </div>
+
+                        <h2 class="mb-3">Verify Your Account</h2>
+                        <p class="text-muted mb-4">We've sent a verification code to your email address (<strong th:text="${email}">your.email@example.com</strong>). Please enter it below.</p>
+
+                        <div th:if="${msg}" class="alert alert-dismissible fade show"
+                             th:classappend="${msg_type == 'danger' ? 'alert-danger' : 'alert-info'}" role="alert">
+                            <span th:text="${msg}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <form method="post" th:action="@{/verify}">
+                            <input type="hidden" name="email" th:value="${email}">
+                            <div data-mdb-input-init class="form-outline mb-4">
+                                <input type="text" name="code" class="form-control form-control-lg text-center"
+                                       placeholder="Enter 6-digit code" maxlength="6" required autofocus
+                                       pattern="[0-9]{6}" title="Please enter a 6-digit code"/>
+                                <label class="form-label" for="code">Verification Code</label>
+                            </div>
+                            <div class="d-grid gap-2 mb-4">
+                                <button type="submit" class="btn btn-primary btn-lg">Verify Account</button>
+                            </div>
+                            <div class="text-center">
+                                <p class="mb-0">Didn't receive the code?</p>
+                                <a th:href="@{/verify(resend=true, email=${email})}" class="text-primary">Resend verification code</a>
+                            </div>
+                        </form>
+                        <hr class="my-4">
+                        <p class="text-muted small">
+                            <a th:href="@{/signup}">Back to Sign Up</a> | <a th:href="@{/signin}">Sign In</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-mdb-input-init]').forEach((element) => {
+            new mdb.Input(element).init();
+        });
+    });
+</script>
+</body>
+</html>

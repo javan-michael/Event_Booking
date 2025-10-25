@@ -105,7 +105,10 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user-circle"></i>
-                    <span sec:authentication="principal.fullname">User Name</span>
+                    <span th:if="${#authentication.principal instanceof T(com.strathmore.booking.CustomUserDetails)}"
+                          th:text="${#authentication.principal.fullname}">Full Name</span>
+                    <span th:unless="${#authentication.principal instanceof T(com.strathmore.booking.CustomUserDetails)}"
+                          th:text="${#authentication.principal.username}">Username</span>
                     <span sec:authorize="hasRole('ADMIN')"> (Admin)</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
