@@ -1,6 +1,8 @@
 package com.strathmore.booking;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,18 +35,25 @@ public class EventController {
     @PostMapping("/create-event")
     public String createEvent(@ModelAttribute Event event,
                               @RequestParam("eventImageFile") MultipartFile file,
-                              RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes,
+                              Authentication authentication) { // Inject Authentication
+
+        // Get the currently logged-in user
+        if (!(authentication.getPrincipal() instanceof CustomUserDetails customUserDetails)) {
+            redirectAttributes.addFlashAttribute("msg_type", "danger");
+            redirectAttributes.addFlashAttribute("msg", "Could not identify logged-in user.");
+            return "redirect:/create-event";
+        }
+        User currentUser = customUserDetails.getUser();
+        event.setCreatedBy(currentUser); // Associate event with user
 
         String imagePath = null;
         if (!file.isEmpty()) {
             try {
-                // Ensure upload directory exists
                 Path uploadPath = Paths.get(UPLOAD_DIR);
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
-
-                // Create a unique filename
                 String originalFilename = file.getOriginalFilename();
                 String fileExtension = "";
                 if (originalFilename != null && originalFilename.contains(".")) {
@@ -52,35 +61,27 @@ public class EventController {
                 }
                 String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
                 Path filePath = uploadPath.resolve(uniqueFileName);
-
-                // Save the file
                 Files.copy(file.getInputStream(), filePath);
-
-                // Store relative path for the entity
                 imagePath = "uploads/events/" + uniqueFileName;
-
             } catch (IOException e) {
-                // Handle file saving error
-                e.printStackTrace(); // Log the error
+                e.printStackTrace();
                 redirectAttributes.addFlashAttribute("msg_type", "danger");
                 redirectAttributes.addFlashAttribute("msg", "Error uploading image: " + e.getMessage());
-                return "redirect:/create-event"; // Stay on the create page
+                return "redirect:/create-event";
             }
         }
-
         event.setImagePath(imagePath);
 
         try {
             eventRepository.save(event);
             redirectAttributes.addFlashAttribute("msg_type", "success");
             redirectAttributes.addFlashAttribute("msg", "Event created successfully!");
-            return "redirect:/dashboard"; // Redirect to dashboard after success
+            return "redirect:/dashboard";
         } catch (Exception e) {
-            // Handle database saving error
-            e.printStackTrace(); // Log the error
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("msg_type", "danger");
             redirectAttributes.addFlashAttribute("msg", "Error saving event: " + e.getMessage());
-            return "redirect:/create-event"; // Stay on the create page
+            return "redirect:/create-event";
         }
     }
 }

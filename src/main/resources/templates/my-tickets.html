@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras.spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title>My Tickets - StrathEventique</title>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+    <div class="container" style="margin-top: 100px;">
+        <div class="text-center mb-5">
+            <h1>My Event Tickets</h1>
+            <p class="lead text-muted">Your registrations for upcoming events.</p>
+        </div>
+
+        <th:block th:if="${registrations != null and !registrations.isEmpty()}">
+            <div class.java.lang.String row-cols-1 row-cols-md-2 g-4">
+            <div th:each="reg : ${registrations}" class="col">
+                <div class="card shadow-sm mb-4" style="border-left: 5px solid var(--gold);">
+                    <div class="card-body row align-items-center">
+
+                        <div class="col-md-8">
+                            <h4 class="card-title" th:text="${reg.event.title}">Event Title</h4>
+                            <p class="card-text mb-2">
+                                <i class="fas fa-calendar-alt me-2 text-muted"></i>
+                                <span th:text="${#temporals.format(reg.event.eventDate, 'EEEE, MMMM d, yyyy')}">Date</span>
+                            </p>
+                            <p class="card-text mb-2">
+                                <i class="fas fa-clock me-2 text-muted"></i>
+                                <span th:text="${#temporals.format(reg.event.eventTime, 'h:mm a')}">Time</span>
+                            </p>
+                            <p class="card-text mb-3">
+                                <i class="fas fa-map-marker-alt me-2 text-muted"></i>
+                                <span th:text="${reg.event.location}">Location</span>
+                            </p>
+                            <a th:href="@{/event-details(id=${reg.event.id})}" class="btn btn-outline-primary btn-sm">View Event Details</a>
+                            <a th:if="${reg.event.eventDate.isAfter(#temporals.createNowDate()) or reg.event.eventDate.isEqual(#temporals.createNowDate())}"
+                               th:href="@{/cancel-registration(id=${reg.event.id})}"
+                               class="btn btn-outline-danger btn-sm float-end"
+                               onclick="return confirm('Cancel registration for this event?');">
+                                Cancel Registration
+                            </a>
+                        </div>
+
+                        <div class="col-md-4 text-center">
+                            <img th:src="'data:image/png;base64,' + ${reg.qrCodeBase64}" alt="Event Ticket QR Code" class="img-fluid mt-3 mb-1" style="max-width: 150px;">
+                            <span th:if="${reg.checkedInAt != null}" class="badge bg-success">Checked In</span>
+                            <small th:unless="${reg.checkedInAt != null}" class="text-muted d-block">Scan for Verification</small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+    </th:block>
+
+    <div th:if="${registrations == null or registrations.isEmpty()}" class="text-center">
+        <p class="lead text-muted">You haven't registered for any upcoming events yet.</p>
+        <a th:href="@{/events}" class="btn btn-primary mt-2">Browse Events</a>
+    </div>
+    </div>
+</main>
+
+</body>
+</html>

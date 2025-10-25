@@ -7,7 +7,7 @@ import java.time.LocalTime;
 
 @Data
 @Entity
-@Table(name = "events") // Matches your PHP table
+@Table(name = "events")
 public class Event {
 
     @Id
@@ -17,18 +17,23 @@ public class Event {
     @Column(nullable = false)
     private String title;
 
-    @Lob // Good for potentially long descriptions
+    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)
-    private LocalDate eventDate; // Use LocalDate for date only
+    private LocalDate eventDate;
 
     @Column(nullable = false)
-    private LocalTime eventTime; // Use LocalTime for time only
+    private LocalTime eventTime;
 
     @Column(nullable = false)
     private String location;
 
     private String imagePath;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User createdBy; // Link to the User entity
+
 }
