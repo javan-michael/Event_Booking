@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Scan Result - StrathEventique</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" th:href="@{/assets/StrathEventique_Logo.png}" type="image/png">
+    <style>
+        body { padding: 40px; background-color: #f8f9fa; }
+        .card { max-width: 600px; margin: auto; }
+        :root{ --navy: #0a2540; --gold: #D4AF37; }
+        .alert-success { background-color: #d1e7dd; color: #0f5132; border-color: #badbcc;}
+        .alert-warning { background-color: #fff3cd; color: #664d03; border-color: #ffecb5;}
+        .alert-danger { background-color: #f8d7da; color: #842029; border-color: #f5c2c7;}
+        .btn-secondary { background-color: #6c757d; border-color: #6c757d; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="card-title text-center mb-4">Scan Result</h1>
+            <div th:if="${scanResult != null}" class="alert"
+                 th:classappend="${scanResult.status == 'success' ? 'alert-success' : (scanResult.status == 'warning' ? 'alert-warning' : 'alert-danger')}"
+                 role="alert">
+                <h4 class="alert-heading" th:text="${#strings.capitalize(scanResult.status)} + '!'">Status!</h4>
+                <p th:text="${scanResult.message}">Scan message here.</p>
+                <div th:if="${scanResult.user != null}">
+                    <hr>
+                    <p class="mb-0"><strong>User:</strong> <span th:text="${scanResult.user}">User Name</span></p>
+                    <p class="mb-0"><strong>Event:</strong> <span th:text="${scanResult.event}">Event Title</span></p>
+                    <p th:if="${scanResult.time != null}" class="mb-0">
+                        <strong>Time:</strong> <span th:text="${#temporals.format(scanResult.time, 'yyyy-MM-dd HH:mm:ss')}">Timestamp</span>
+                    </p>
+                </div>
+            </div>
+            <div th:unless="${scanResult != null}" class="alert alert-danger" role="alert">
+                Invalid scan request.
+            </div>
+            <div class="text-center">
+                <a th:href="@{/dashboard}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

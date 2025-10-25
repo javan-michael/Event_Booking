@@ -2,7 +2,7 @@ package com.strathmore.booking;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime; // Import LocalDateTime
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -31,8 +31,11 @@ public class User {
     @Transient
     private String passwordRepeat;
 
-    // New fields for verification
     private String verificationCode;
     private LocalDateTime verificationCodeExpiresAt;
+
+    // Add fields for password reset
+    private String resetToken;
+    private LocalDateTime resetTokenExpiresAt;
 
 }

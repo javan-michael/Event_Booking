@@ -11,11 +11,12 @@ import java.util.Optional;
 @Repository
 public interface EventRegistrationRepository extends JpaRepository<EventRegistration, Long> {
 
-    // Find registrations for a specific user and event
     Optional<EventRegistration> findByUserAndEvent(User user, Event event);
 
-    // Find all upcoming registrations for a user
     @Query("SELECT er FROM EventRegistration er JOIN er.event e WHERE er.user = :user AND e.eventDate >= :today ORDER BY e.eventDate ASC, e.eventTime ASC")
     List<EventRegistration> findUpcomingRegistrationsByUser(User user, LocalDate today);
+
+    // Add method to find all registrations for an event, ordered by user name
+    List<EventRegistration> findByEventOrderByUser_FullnameAsc(Event event);
 
 }

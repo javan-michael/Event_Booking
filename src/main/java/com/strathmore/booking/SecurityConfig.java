@@ -24,16 +24,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/", "/events", "/event-details", "/signup", "/verify",
-                                "/signin",
+                                "/signin", "/forgot-password", "/reset-password",
                                 "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**", "/favicon.ico"
                         ).permitAll()
-                        .requestMatchers("/create-event").hasRole("ADMIN")
+                        // Update Admin rules to include scan-ticket
+                        .requestMatchers("/create-event", "/edit-event", "/delete-event", "/admin/**", "/scan-ticket").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/signin")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true) // Changed this line
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
