@@ -15,19 +15,21 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div th:if="${event != null}" class="card shadow-lg">
-                    <img th:src="${event.imagePath != null ? @{'/' + event.imagePath} : 'https://placehold.co/600x400/0a2540/D4AF37?text=' + event.title}"
-                         class="card-img-top" th:alt="${event.title}" style="height: 400px; object-fit: cover;"> <div class="card-body p-5">
-                    <h1 class="card-title mb-3" th:text="${event.title}">Event Title</h1>
+                    <img th:src="${event.imagePath != null ? '/' + event.imagePath : 'https://placehold.co/600x400/0a2540/D4AF37?text=' + event.title}"
+                         class="card-img-top" th:alt="${event.title}" style="height: 1000px; object-fit: cover;"> <div class="card-body p-4"> <h1 class="card-title mb-3" th:text="${event.title}">Event Title</h1>
 
-                    <div class="text-muted mb-4">
-                        <div class="mb-2"> <i class="fas fa-calendar-alt me-2"></i>
-                            <span th:text="${#temporals.format(event.eventDate, 'EEEE, MMMM d, yyyy')}">Date</span>
+                    <div class="mb-4">
+                        <div class="d-flex align-items-baseline mb-2">
+                            <i class="fas fa-calendar-alt me-2 text-muted" style="width: 1.2em;"></i>
+                            <span class="text-muted" th:text="${#temporals.format(event.eventDate, 'EEEE, MMMM d, yyyy')}">Date</span>
                         </div>
-                        <div class="mb-2"> <i class="fas fa-clock me-2"></i>
-                            <span th:text="${#temporals.format(event.eventTime, 'h:mm a')}">Time</span>
+                        <div class="d-flex align-items-baseline mb-2">
+                            <i class="fas fa-clock me-2 text-muted" style="width: 1.2em;"></i>
+                            <span class="text-muted" th:text="${#temporals.format(event.eventTime, 'h:mm a')}">Time</span>
                         </div>
-                        <div> <i class="fas fa-map-marker-alt me-2"></i>
-                            <span th:text="${event.location}">Location</span>
+                        <div class="d-flex align-items-baseline mb-2">
+                            <i class="fas fa-map-marker-alt me-2 text-muted" style="width: 1.2em;"></i>
+                            <span class="text-muted" th:text="${event.location}">Location</span>
                         </div>
                     </div>
 
@@ -59,8 +61,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                </div>
+
+                </div> </div>
                 <div th:unless="${event != null}" class="alert alert-warning text-center">
                     Event not found.
                     <a th:href="@{/events}" class="alert-link">Return to events list</a>.
