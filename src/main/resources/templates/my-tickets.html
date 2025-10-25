@@ -18,7 +18,7 @@
         </div>
 
         <th:block th:if="${registrations != null and !registrations.isEmpty()}">
-            <div class.java.lang.String row-cols-1 row-cols-md-2 g-4">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
             <div th:each="reg : ${registrations}" class="col">
                 <div class="card shadow-sm mb-4" style="border-left: 5px solid var(--gold);">
                     <div class="card-body row align-items-center">
@@ -37,8 +37,7 @@
                                 <i class="fas fa-map-marker-alt me-2 text-muted"></i>
                                 <span th:text="${reg.event.location}">Location</span>
                             </p>
-                            <a th:href="@{/event-details(id=${reg.event.id})}" class="btn btn-outline-primary btn-sm">View Event Details</a>
-                            <a th:if="${reg.event.eventDate.isAfter(#temporals.createNowDate()) or reg.event.eventDate.isEqual(#temporals.createNowDate())}"
+                            <a th:if="${reg.event.eventDate.isAfter(T(java.time.LocalDate).now()) or reg.event.eventDate.isEqual(T(java.time.LocalDate).now())}"
                                th:href="@{/cancel-registration(id=${reg.event.id})}"
                                class="btn btn-outline-danger btn-sm float-end"
                                onclick="return confirm('Cancel registration for this event?');">

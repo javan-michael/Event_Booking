@@ -70,7 +70,7 @@
                         </div>
                         <div>
                             <a th:href="@{/event-details(id=${event.id})}" class="btn btn-sm btn-info">View Details</a>
-                            <a th:if="${event.eventDate.isAfter(#temporals.createNowDate()) or event.eventDate.isEqual(#temporals.createNowDate())}"
+                            <a th:if="${event.eventDate.isAfter(T(java.time.LocalDate).now()) or event.eventDate.isEqual(T(java.time.LocalDate).now())}"
                                th:href="@{/cancel-registration(id=${event.id})}"
                                class="btn btn-sm btn-danger"
                                onclick="return confirm('Are you sure you want to cancel your registration for this event?');">
