@@ -1,23 +1,11 @@
-<html xmlns:th="http://www.thymeleaf.org"
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 
 <head>
     <title>Sign Up - StrathEventique</title>
-    <th:block layout:fragment="styles">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
-        <style>
-            .password-toggle-icon {
-                position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
-                cursor: pointer; z-index: 5;
-            }
-            .form-outline { position: relative; }
-            .gradient-custom-3 {
-                background: linear-gradient(90deg, rgba(10,37,64,0.9) 0%, rgba(10,37,64,0.7) 100%);
-            }
-        </style>
-    </th:block>
 </head>
 
 <body>
@@ -43,10 +31,11 @@
                                 </div>
                                 <h3 class="fw-normal mb-4 text-center" style="letter-spacing: 1px;">Create an Account</h3>
 
-                                <form method="post" th:action="@{/signup}" th:object="${userDto}">
+                                <form method="post" th:action="@{/signup}" th:object="${user}">
                                     <div data-mdb-input-init class="form-outline mb-4">
                                         <input type="text" name="fullname" class="form-control form-control-lg" required th:field="*{fullname}" />
-                                        <label class="form-label" for="fullname">Your Name</label> </div>
+                                        <label class="form-label" for="fullname">Your Name</label>
+                                    </div>
                                     <div data-mdb-input-init class="form-outline mb-4">
                                         <input type="email" name="email" class="form-control form-control-lg" required th:field="*{email}" />
                                         <label class="form-label" for="email">Your Email</label>
@@ -85,7 +74,6 @@
     <th:block layout:fragment="scripts">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
         <script>
-            // Keep the password toggle function
             function togglePasswordVisibility(fieldId, iconElement) {
                 const passwordField = document.getElementById(fieldId);
                 if (passwordField.type === 'password') {
@@ -98,7 +86,6 @@
                     iconElement.classList.add('fa-eye');
                 }
             }
-            // Initialize MDB components (needed since scripts load at end)
             document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('[data-mdb-input-init]').forEach((element) => {
                     new mdb.Input(element).init();
@@ -109,4 +96,6 @@
             });
         </script>
     </th:block>
-</main> </html>
+</main>
+
+</html>

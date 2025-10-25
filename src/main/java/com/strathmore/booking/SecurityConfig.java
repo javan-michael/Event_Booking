@@ -25,29 +25,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-
-                        .requestMatchers(
-                                "/", "/events", "/event-details", "/signup", "/verify", // Public pages
-                                "/signin", // Explicitly permit the login page URL
-                                "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**", "/favicon.ico" // Static files
-                        ).permitAll()
-                        // Rule 2: All *other* requests must be authenticated
-                        .anyRequest().authenticated()
-                )
-                // Configure the login form
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/signin")           // The URL for our custom login page (GET)
-                        .loginProcessingUrl("/login")   // **CHANGE:** Use the default URL for submission (POST)
-                        .defaultSuccessUrl("/dashboard", true) // Redirect after successful login
-                        .permitAll()                     // Allows access to loginPage and loginProcessingUrl
-                )
-                // Configure logout (remains the same)
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/signin?logout")
-                        .permitAll()
-                )
-                .csrf(withDefaults()); // Keep CSRF enabled
+                        .anyRequest().permitAll() // Allow EVERYTHING temporarily
+                ); // Keep CSRF enabled
 
         return http.build();
     }

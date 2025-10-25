@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title th:text="${event != null ? event.title : 'Event Details'} + ' - StrathEventique'">Event Details</title>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+    <div class="container" style="margin-top: 100px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div th:if="${event != null}" class="card shadow-lg">
+                    <img th:src="${event.imagePath != null ? @{'/' + event.imagePath} : 'https://placehold.co/600x400/0a2540/D4AF37?text=' + event.title}"
+                         class="card-img-top" th:alt="${event.title}" style="height: 400px; object-fit: cover;"> <div class="card-body p-5">
+                    <h1 class="card-title mb-3" th:text="${event.title}">Event Title</h1>
+
+                    <div class="text-muted mb-4">
+                        <div class="mb-2"> <i class="fas fa-calendar-alt me-2"></i>
+                            <span th:text="${#temporals.format(event.eventDate, 'EEEE, MMMM d, yyyy')}">Date</span>
+                        </div>
+                        <div class="mb-2"> <i class="fas fa-clock me-2"></i>
+                            <span th:text="${#temporals.format(event.eventTime, 'h:mm a')}">Time</span>
+                        </div>
+                        <div> <i class="fas fa-map-marker-alt me-2"></i>
+                            <span th:text="${event.location}">Location</span>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">About this Event</h4>
+                    <p class="card-text" style="white-space: pre-wrap;" th:text="${event.description}">Event Description</p>
+
+                    <div class="d-grid gap-2 mt-5">
+                        <div sec:authorize="isAnonymous()">
+                            <a th:href="@{/signin}" class="btn btn-primary btn-lg">Sign In to Register</a>
+                        </div>
+
+                        <div sec:authorize="isAuthenticated()">
+                            <div sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/dashboard}" class="btn btn-secondary btn-lg">Manage Events (Admin)</a>
+                                <a th:href="@{/edit-event(id=${event.id})}" class="btn btn-info btn-lg mt-2">Edit Event</a>
+                            </div>
+                            <div sec:authorize="!hasRole('ADMIN')">
+                                <th:block th:if="${isRegistered}">
+                                    <button class="btn btn-success btn-lg" disabled>✓ Registered</button>
+                                    <a th:href="@{/cancel-registration(id=${event.id})}"
+                                       class="btn btn-outline-danger btn-sm mt-2"
+                                       onclick="return confirm('Cancel registration for this event?');">
+                                        Cancel Registration
+                                    </a>
+                                </th:block>
+                                <th:block th:unless="${isRegistered}">
+                                    <a th:href="@{/register-for-event(id=${event.id})}" class="btn btn-primary btn-lg">Register for this Event</a>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div th:unless="${event != null}" class="alert alert-warning text-center">
+                    Event not found.
+                    <a th:href="@{/events}" class="alert-link">Return to events list</a>.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
